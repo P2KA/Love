@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For Someone Special</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffeeee;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+    
+    #main-container {
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    
+    #heart-button {
+      width: 120px;
+      height: 108px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="red" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      cursor: pointer;
+      margin: 20px auto;
+      transition: all 0.3s;
+      animation: heartbeat 1.2s infinite;
+    }
+    
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.1); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    #name-input {
+      padding: 12px 20px;
+      border: 2px solid #ff9999;
+      border-radius: 30px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+      width: 250px;
+    }
+    
+    #proposal-text {
+      font-size: 24px;
+      color: #d9333f;
+      margin: 20px 0;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+    
+    .response-button {
+      padding: 10px 30px;
+      margin: 10px;
+      font-size: 18px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    
+    #yes-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    #no-button {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    .response-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .falling-heart {
+      position: absolute;
+      font-size: 24px;
+      color: red;
+      animation: falling linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    
+    @keyframes falling {
+      0% {
+        top: -10vh;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        top: 100vh;
+        transform: translateX(calc(var(--random-offset) * 20px - 10px)) rotate(720deg);
+      }
+    }
+    
+    #final-message {
+      font-size: 28px;
+      color: #d9333f;
+      font-weight: bold;
+      margin: 30px 0;
+      opacity: 0;
+      transition: opacity 1s;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    #button-container {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container">
+    <input type="text" id="name-input" placeholder="Masukkan nama orang spesial">
+    <div id="heart-button"></div>
+    <div id="proposal-text"></div>
+    <div id="button-container">
+      <button class="response-button" id="yes-button">YES!</button>
+      <button class="response-button" id="no-button">No :(</button>
+    </div>
+    <div id="final-message"></div>
+  </div>
+
+  <script>
+    const heartButton = document.getElementById('heart-button');
+    const nameInput = document.getElementById('name-input');
+    const proposalText = document.getElementById('proposal-text');
+    const buttonContainer = document.getElementById('button-container');
+    const yesButton = document.getElementById('yes-button');
+    const noButton = document.getElementById('no-button');
+    const finalMessage = document.getElementById('final-message');
+    
+    let specialName = "";
+    let heartsInterval;
+    
+    // Setup heart button click
+    heartButton.addEventListener('click', function() {
+      specialName = nameInput.value.trim();
+      
+      if (specialName) {
+        nameInput.style.display = 'none';
+        proposalText.textContent = `Dear ${specialName}, maukah kamu menikah denganku?`;
+        proposalText.style.opacity = '1';
+        buttonContainer.style.display = 'block';
+        heartButton.style.animation = 'none';
+        this.style.transform = 'scale(1.2)';
+        
+        // Set timeout to return to normal size
+        setTimeout(() => {
+          heartButton.style.transform = 'scale(1)';
+        }, 300);
+      } else {
+        alert('Silakan masukkan nama terlebih dahulu!');
+      }
+    });
+    
+    // Setup yes button click
+    yesButton.addEventListener('click', function() {
+      proposalText.style.display = 'none';
+      buttonContainer.style.display = 'none';
+      finalMessage.textContent = `Aku mencintaimu ${specialName}!  💖`;
+      finalMessage.style.opacity = '1';
+      
+      // Start falling hearts effect
+      heartsInterval = setInterval(createFallingHeart, 100);
+      
+      // Make heart float to the top
+      setTimeout(() => {
+        heartButton.style.position = 'absolute';
+        heartButton.style.top = '10%';
+        heartButton.style.fontSize = '80px';
+      }, 1000);
+    });
+    
+    // Setup no button click
+    noButton.addEventListener('click', function() {
+      proposalText.textContent = "Aku tidak akan menyerah!";
+      
+      // Make No button move away when hovered (just for fun)
+      noButton.style.position = 'absolute';
+      noButton.style.left = (Math.random() * 300 - 150) + 'px';
+      noButton.style.top = (Math.random() * 200 - 100) + 'px';
+    });
+    
+    // Function to create falling hearts
+    function createFallingHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'falling-heart';
+      heart.innerHTML = '❤️';
+      
+      // Random horizontal position
+      const randomX = Math.random() * window.innerWidth;
+      heart.style.left = randomX + 'px';
+      
+      // Random animation duration (2-5s)
+      const duration = Math.random() * 3 + 2;
+      heart.style.animationDuration = duration + 's';
+      
+      // Random delay (0-3s)
+      const delay = Math.random() * 3;
+      heart.style.animationDelay = delay + 's';
+      
+      // Random horizontal movement
+      heart.style.setProperty('--random-offset', Math.random());
+      
+      document.body.appendChild(heart);
+      
+      // Remove heart after animation completes
+      setTimeout(() => {
+        heart.remove();
+      }, (duration + delay) * 1000);
+    }
+  </script>
+</body>
+</html>
